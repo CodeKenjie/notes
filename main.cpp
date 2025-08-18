@@ -5,6 +5,7 @@
 #include <vector>
 #include <sstream>
 #include <iomanip>
+#include <cstdio>
 
 class Note{
 public:
@@ -65,12 +66,72 @@ void openNote(std::vector<Note> &notes) {
     }
 }
 
+void saveNotes(std::vector<Note> &notes) {
+    if (notes.empty()) {
+        return;
+    }
+
+    std::fstream Date;
+    std::fstream Title;
+    std::fstream Content;
+    std::string date;
+    std::string title;
+    std::string content;
+
+    Date.open("dates.txt", std::ios::out);
+    for (int i = 0; i < notes.size(); i++) {
+        Date << notes[i].Date << "|";
+    }
+    Date.close();
+    
+    Title.open("titles.txt", std::ios::out);
+    for (int i = 0; i < notes.size(); i++) {
+        Title << notes[i].Title << "|";
+    }
+    Title.close();
+    
+    Content.open("contents.txt", std::ios::out);
+    for (int i = 0; i < notes.size(); i++) {
+        Content << notes[i].Content << "|";
+    }
+    Content.close();
+}
+
+void loadNotes(std::vector<Note> &notes) {
+    std::fstream Dates;
+    std::fstream Titles;
+    std::fstream Contents;
+    int id = lastID++;
+    std::string date;
+    std::string title;
+    std::string content;
+
+    Dates.open("dates.txt", std::ios::in);
+    Titles.open("titles.txt", std::ios::in);
+    Contents.open("contents.txt", std::ios::in);
+    
+    while(std::getline(Dates, date, '|'), std::getline(Titles, title, '|'), std::getline(Contents, content, '|')) {
+        Note LoadNotes(id, date, title, content);
+        notes.push_back(LoadNotes);
+        notes.shrink_to_fit();
+    }
+
+    Dates.close();
+    Titles.close();
+    Contents.close();
+    remove("dates.txt");
+    remove("titles.txt");
+    remove("contents.txt");
+}
+
 int main() {
     std::string act;
     std::vector<Note> notes;
+
+    loadNotes(notes);
     
     while (true) {
-        std::cout << "[add]\t[open]\n";
+        std::cout << "[add]\t[open]\t[quit]\n";
         std::cout << "[act] ";
         std::getline(std::cin >> std::ws, act);
 
@@ -78,6 +139,9 @@ int main() {
             addNote(notes);
         } else if (act == "open") {
             openNote(notes);
+        } else if (act == "quit") {
+            saveNotes(notes);
+            exit(1);
         }
     }
 

@@ -5,7 +5,6 @@
 #include <vector>
 #include <sstream>
 #include <iomanip>
-#include <cstdio>
 
 class Note{
 public:

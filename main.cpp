@@ -5,6 +5,15 @@
 #include <vector>
 #include <sstream>
 #include <iomanip>
+#include <cstdlib>
+
+void ClearScreen() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
 
 class Note{
 public:
@@ -28,6 +37,8 @@ void addNote(std::vector<Note> &notes) {
     int id = lastID++;
     std::string title, content;
     std::string date = cdate.str();
+
+    std::cout << "[Add Note]:" << std::endl;
     std::cout << "Title: ";
     std::getline(std::cin >> std::ws, title);
 
@@ -38,16 +49,19 @@ void addNote(std::vector<Note> &notes) {
     
     notes.push_back(new_note);
     notes.shrink_to_fit();
+    ClearScreen();
 }
 
 void openNote(std::vector<Note> &notes) {
     int index;
 
     if (notes.empty()) {
+        std::cout << "[Open Note]:" << std::endl;
         std::cout << "No notes Available!" << std::endl;
         return;
     }
 
+    std::cout << "[Open Note]:" << std::endl;
     for(int i = 0; i < notes.size(); ++i){
         std::cout << '[' << i + 1 << "] " << notes[i].Title << std::endl;
     }
@@ -56,14 +70,21 @@ void openNote(std::vector<Note> &notes) {
     std::cin >> index;
     index -= 1;
 
+    ClearScreen();
     if (index >= 0 && index <= notes.size()) {
-            std::cout << "ID: " << notes[index].Id << '\n' << "Date: " << notes[index].Date << '\n' << "Title: " << notes[index].Title << '\n' << notes[index].Content << std::endl;
+            std::cout << "Date: " << notes[index].Date << '\n' << "Title: " << notes[index].Title << "\n\n" << notes[index].Content << std::endl;
     } else if (index <= 0 && index >= notes.size()) {
         return;
     }
 }
 
 void editNote(std::vector<Note> &notes) {
+    if (notes.empty()) {
+        std::cout << "[Edit Note]:" << std::endl;
+        std::cout << "No notes Available!" << std::endl;
+        return;
+    }
+
     std::time_t now = std::time(nullptr);
     std::tm *localtime = std::localtime(&now);
     std::ostringstream cdate;
@@ -74,6 +95,7 @@ void editNote(std::vector<Note> &notes) {
     std::string edate = cdate.str();
     int index;
 
+    std::cout << "[Edit Notes]:" << std::endl;
     for(int i = 0; i < notes.size(); ++i){
         std::cout << '[' << i + 1 << "] " << notes[i].Title << std::endl;
     }
@@ -82,6 +104,7 @@ void editNote(std::vector<Note> &notes) {
     std::cin >> index;
     index -= 1;
     
+    ClearScreen();
     if (index >= 0 && index <= notes.size()) {
         notes[index].Date = edate;
         std::cout << "Title: " << notes[index].Title << "\n: "<< notes[index].Content << '\n';
@@ -92,14 +115,17 @@ void editNote(std::vector<Note> &notes) {
     } else if (index <= 0 && index >= notes.size()) {
         return;
     }
+    ClearScreen();
 }
 
 void deleteNote(std::vector<Note> &notes){
     if (notes.empty()) {
+        std::cout << "[Delete Note]:" << std::endl;
         std::cout << "No available Notes" << std::endl;
         return;
     }
 
+    std::cout << "[Delete Note]:" << std::endl;
     for (int i = 0; i < notes.size(); i++) {
         std::cout << '[' << i + 1 << "] " << notes[i].Title << '\n';
     }
@@ -118,6 +144,7 @@ void deleteNote(std::vector<Note> &notes){
         std::cout << "Invalid index";
         return;
     }
+    ClearScreen();
 }
 
 void saveNotes(std::vector<Note> &notes) {
@@ -184,18 +211,23 @@ int main() {
 
     loadNotes(notes);
     
+    ClearScreen();
     while (true) {
         std::cout << "[add]\t[open]\t[edit]\t[delete]\t[quit]\n";
         std::cout << "[act] ";
         std::getline(std::cin >> std::ws, act);
 
         if (act == "add") {
+            ClearScreen();
             addNote(notes);
         } else if (act == "open") {
+            ClearScreen();
             openNote(notes);
         } else if (act == "edit"){
+            ClearScreen();
             editNote(notes);
         } else if (act == "delete") {
+            ClearScreen();
             deleteNote(notes);
         } else if (act == "quit") {
             saveNotes(notes);

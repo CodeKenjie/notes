@@ -31,7 +31,7 @@ void addNote(std::vector<Note> &notes) {
     std::cout << "Title: ";
     std::getline(std::cin >> std::ws, title);
 
-    std::cout << ":";
+    std::cout << ": ";
     std::getline(std::cin >> std::ws, content);
 
     Note new_note(id, date, title, content);
@@ -52,13 +52,43 @@ void openNote(std::vector<Note> &notes) {
         std::cout << '[' << i + 1 << "] " << notes[i].Title << std::endl;
     }
 
-    std::cout << "[capacity]: " << notes.capacity() << '\n';
-    std::cout << "[size]: " << notes.size() << '\n';
     std::cout << "[index]: ";
     std::cin >> index;
+    index -= 1;
 
     if (index >= 0 && index <= notes.size()) {
-            std::cout << "ID: " << notes[index-1].Id << '\n' << "Date: " << notes[index-1].Date << '\n' << "Title: " << notes[index-1].Title << '\n' << notes[index-1].Content << std::endl;
+            std::cout << "ID: " << notes[index].Id << '\n' << "Date: " << notes[index].Date << '\n' << "Title: " << notes[index].Title << '\n' << notes[index].Content << std::endl;
+    } else if (index <= 0 && index >= notes.size()) {
+        return;
+    }
+}
+
+void editNote(std::vector<Note> &notes) {
+    std::time_t now = std::time(nullptr);
+    std::tm *localtime = std::localtime(&now);
+    std::ostringstream cdate;
+    cdate << std::put_time(localtime, "%Y-%m-%d %I:%M %p");
+
+    std::string etitle;
+    std::string econtent;
+    std::string edate = cdate.str();
+    int index;
+
+    for(int i = 0; i < notes.size(); ++i){
+        std::cout << '[' << i + 1 << "] " << notes[i].Title << std::endl;
+    }
+
+    std::cout << "[index]: ";
+    std::cin >> index;
+    index -= 1;
+    
+    if (index >= 0 && index <= notes.size()) {
+        notes[index].Date = edate;
+        std::cout << "Title: " << notes[index].Title << "\n: "<< notes[index].Content << '\n';
+        std::cout << "Edit Title: ";
+        std::getline(std::cin >> std::ws, notes[index].Title);
+        std::cout << "edit Content: ";
+        std::getline(std::cin >> std::ws, notes[index].Content);
     } else if (index <= 0 && index >= notes.size()) {
         return;
     }
@@ -155,7 +185,7 @@ int main() {
     loadNotes(notes);
     
     while (true) {
-        std::cout << "[add]\t[open]\t[delete]\t[quit]\n";
+        std::cout << "[add]\t[open]\t[edit]\t[delete]\t[quit]\n";
         std::cout << "[act] ";
         std::getline(std::cin >> std::ws, act);
 
@@ -163,6 +193,8 @@ int main() {
             addNote(notes);
         } else if (act == "open") {
             openNote(notes);
+        } else if (act == "edit"){
+            editNote(notes);
         } else if (act == "delete") {
             deleteNote(notes);
         } else if (act == "quit") {

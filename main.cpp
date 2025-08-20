@@ -72,7 +72,7 @@ void openNote(std::vector<Note> &notes) {
 
     ClearScreen();
     if (index >= 0 && index <= notes.size()) {
-            std::cout << "Date: " << notes[index].Date << '\n' << "Title: " << notes[index].Title << "\n\n" << notes[index].Content << std::endl;
+            std::cout << "Date: " << notes[index].Date << '\n' << "Title: " << notes[index].Title << "\n\n" << notes[index].Content << '\n' << std::endl;
     } else if (index <= 0 && index >= notes.size()) {
         return;
     }
@@ -211,7 +211,10 @@ int main() {
 
     loadNotes(notes);
     
-    ClearScreen();
+    std::cout << "\t=====================\n";
+    std::cout << "\t==      NOTES      ==\n";
+    std::cout << "\t=====================\n";
+    
     while (true) {
         std::cout << "[add]\t[open]\t[edit]\t[delete]\t[quit]\n";
         std::cout << "[act] ";

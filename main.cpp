@@ -38,7 +38,7 @@ void addNote(std::vector<Note> &notes) {
     std::string title, content, note;
     std::string date = cdate.str();
 
-    std::cout << "[Add Note: (:w)- Save Note (:q)- Dont Save]:" << std::endl;
+    std::cout << "[Add Note] (:w)-Save Note (:q)-Dont Save:" << std::endl;
     std::cout << "Title: ";
     std::getline(std::cin >> std::ws, title);
 
@@ -73,9 +73,11 @@ void openNote(std::vector<Note> &notes) {
     if (notes.empty()) {
         std::cout << "[Notes List]:" << std::endl;
         std::cout << " No notes Available!\n\n";
-        std::cout << "[Command]";
+        std::cout << "[Command]\n";
         std::getline(std::cin >> std::ws, act);
         if (act == ":q") {
+            return;
+        } else {
             return;
         }
     }
@@ -90,16 +92,56 @@ void openNote(std::vector<Note> &notes) {
     if (index >= 0 && index <= notes.size()) {
         std::cout << "[(:q)- Quit]\n";
         std::cout << "Date: " << notes[index].Date << '\n' << "Title: " << notes[index].Title << "\n" << notes[index].Content << '\n';
-        std::cout << "[Command]";
+        std::cout << "[Command]\n";
         std::getline(std::cin >> std::ws, act);
         if (act == ":q") {
             return;
         }
-    } else if (index <= 0 && index >= notes.size()) {
-        return;
     } else {
         return;
     }
+}
+
+void renameNote(std::vector<Note> &notes) {
+    std::string act;
+    if (notes.empty()) {
+        std::cout << "[Notes List]:" << std::endl;
+        std::cout << " No notes Available!\n\n";
+        std::cout << "[Command]\n";
+        std::getline(std::cin >> std::ws, act);
+        if (act == ":q") {
+            return;
+        } else {
+            return;
+        }
+    }
+
+    std::time_t now = std::time(nullptr);
+    std::tm *localtime = std::localtime(&now);
+    std::ostringstream cdate;
+    cdate << std::put_time(localtime, "%Y-%m-%d %I:%M %p");
+    std::string edate = cdate.str();
+    std::string etitle;
+    int index;
+
+    NoteList(notes);
+
+    std::cout << "[index]: ";
+    std::cin >> index;
+    index -= 1;
+
+    ClearScreen();
+    if (index >= 0 && index <= notes.size()) {
+        notes[index].Date = edate;
+        std::cout << "[Previews Title]:" << std::endl;
+        std::cout << "Title: " << notes[index].Title << '\n'; 
+        std::cout << "[Rename]:" << std::endl;
+        std::cout << "New Title: ";
+        std::getline(std::cin >> std::ws, notes[index].Title);
+    } else {
+        return;
+    }
+
 }
 
 void editNote(std::vector<Note> &notes) {
@@ -107,9 +149,11 @@ void editNote(std::vector<Note> &notes) {
     if (notes.empty()) {
         std::cout << "[Notes List]:" << std::endl;
         std::cout << " No notes Available!\n\n";
-        std::cout << "[Command]";
+        std::cout << "[Command]\n";
         std::getline(std::cin >> std::ws, act);
         if (act == ":q") {
+            return;
+        } else {
             return;
         }
     }
@@ -136,9 +180,7 @@ void editNote(std::vector<Note> &notes) {
         std::cout << "[Previews Note]:" << std::endl;
         std::cout << "Title: " << notes[index].Title << "\n: "<< notes[index].Content << '\n';
 
-        std::cout << "[Edit Note: (:w)-SAVE Edit (:q)- Cancel Edit]:" << std::endl;
-        std::cout << "New Title: ";
-        std::getline(std::cin >> std::ws, notes[index].Title);
+        std::cout << "[Edit Note] (:w)-Save Edit (:q)- Cancel Edit:" << std::endl;
         while (true) {
             std::getline(std::cin >> std::ws, econtent);
             if (econtent == ":w") {
@@ -149,12 +191,53 @@ void editNote(std::vector<Note> &notes) {
             enote += econtent + "\n";
         }
         notes[index].Content = enote;
-    } else if (index <= 0 && index >= notes.size()) {
-        return;
     } else {
         return;
     }
     ClearScreen();
+}
+
+void appendNote(std::vector<Note> &notes) {
+    std::string act;
+    if (notes.empty()) {
+        std::cout << "[Notes List]:" << std::endl;
+        std::cout << " No notes Available!\n\n";
+        std::cout << "[Command]\n";
+        std::getline(std::cin >> std::ws, act);
+        if (act == ":q") {
+            return;
+        } else {
+            return;
+        }
+    }
+    
+    int index; 
+    std::string AppContent, Addlines;
+
+    NoteList(notes);
+
+    std::cout << "[index]: ";
+    std::cin >> index;
+    index -= 1;
+
+    ClearScreen();
+    if (index >= 0 && index <= notes.size()) {
+        std::cout << "[Appen Note] (:w)-Save Edit (:q)- Cancel Edit:" << std::endl;
+        std::cout << "Title: " << notes[index].Title << '\n';
+        std::cout << notes[index].Content;
+        while (true){
+            std::getline(std::cin >> std::ws, AppContent);
+            if (AppContent == ":w") {
+                break;
+            } else if (AppContent == ":q") {
+                return;
+            }
+            Addlines += AppContent + "\n";
+        }
+        notes[index].Content += Addlines;
+    } else {
+        return;
+    }
 }
 
 void deleteNote(std::vector<Note> &notes){
@@ -162,9 +245,11 @@ void deleteNote(std::vector<Note> &notes){
     if (notes.empty()) {
         std::cout << "[Notes List]:" << std::endl;
         std::cout << " No notes Available!\n\n";
-        std::cout << "[Command]";
+        std::cout << "[Command]\n";
         std::getline(std::cin >> std::ws, act);
         if (act == ":q") {
+            return;
+        } else {
             return;
         }
     }
@@ -181,9 +266,6 @@ void deleteNote(std::vector<Note> &notes){
     if (index >= 0 && index <= notes.size()) {
         notes.erase(notes.begin() + index);
         notes.shrink_to_fit();
-    } else if (index <= 0 && index >= notes.size()) {
-        std::cout << "Invalid index";
-        return;
     } else {
         return;
     }
@@ -202,19 +284,19 @@ void saveNotes(std::vector<Note> &notes) {
     std::string title;
     std::string content;
 
-    Date.open("dates.txt", std::ios::out);
+    Date.open(".notes//dates.txt", std::ios::out);
     for (int i = 0; i < notes.size(); i++) {
         Date << notes[i].Date << "|";
     }
     Date.close();
     
-    Title.open("titles.txt", std::ios::out);
+    Title.open(".notes//titles.txt", std::ios::out);
     for (int i = 0; i < notes.size(); i++) {
         Title << notes[i].Title << "|";
     }
     Title.close();
     
-    Content.open("contents.txt", std::ios::out);
+    Content.open(".notes//contents.txt", std::ios::out);
     for (int i = 0; i < notes.size(); i++) {
         Content << notes[i].Content << "|";
     }
@@ -230,9 +312,9 @@ void loadNotes(std::vector<Note> &notes) {
     std::string title;
     std::string content;
 
-    Dates.open("dates.txt", std::ios::in);
-    Titles.open("titles.txt", std::ios::in);
-    Contents.open("contents.txt", std::ios::in);
+    Dates.open(".notes//dates.txt", std::ios::in);
+    Titles.open(".notes//titles.txt", std::ios::in);
+    Contents.open(".notes//contents.txt", std::ios::in);
     
     while(std::getline(Dates, date, '|'), std::getline(Titles, title, '|'), std::getline(Contents, content, '|')) {
         Note LoadNotes(id, date, title, content);
@@ -243,9 +325,9 @@ void loadNotes(std::vector<Note> &notes) {
     Dates.close();
     Titles.close();
     Contents.close();
-    remove("dates.txt");
-    remove("titles.txt");
-    remove("contents.txt");
+    remove(".notes//dates.txt");
+    remove(".notes//titles.txt");
+    remove(".notes//contents.txt");
 }
 
 int main() {
@@ -257,24 +339,31 @@ int main() {
     
     while (true) {
         ClearScreen();
-        std::cout << "============================\n";
-        std::cout << "=====  :Kenjie Notes  ======\n";
-        std::cout << "============================\n";
-        std::cout << "[add]-[open]-[edit]-[delete]\n";
-        std::cout << "Save 'n Quit(:wq) Quit(:q)\n";
-        std::cout << "[Command]";
+        std::cout << "================================\n";
+        std::cout << "=======      Notes      ========\n";
+        std::cout << "================================\n";
+        std::cout << "[:add]-[:open]-[:edit]-[:delete]\n";
+        std::cout << "-----[:rename]----[:append]-----\n";
+        std::cout << "== Save 'n Quit(:wq) Quit(:q) ==\n";
+        std::cout << "[Command]_______________________\n";
         std::getline(std::cin >> std::ws, act);
 
-        if (act == "add") {
+        if (act == ":add" || act == ":ad" || act == ":a") {
             ClearScreen();
             addNote(notes);
-        } else if (act == "open") {
+        } else if (act == ":open" || act == ":op" || act == ":o") {
             ClearScreen();
             openNote(notes);
-        } else if (act == "edit"){
+        } else if (act == ":edit" || act == ":ed" || act == ":e"){
             ClearScreen();
             editNote(notes);
-        } else if (act == "delete") {
+        } else if (act == ":rename" || act == ":re" || act == ":r") {
+            ClearScreen();
+            renameNote(notes);
+        } else if (act == ":append" || act == ":app" || act == ":ap") {
+            ClearScreen();
+            appendNote(notes);
+        } else if (act == ":delete" || act == ":del" || act == ":de" || act == ":d") {
             ClearScreen();
             deleteNote(notes);
         } else if (act == ":wq") {

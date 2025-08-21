@@ -11,7 +11,7 @@ void ClearScreen() {
 #ifdef _WIN32
     system("cls");
 #else
-    system("clear");
+    system("reset");
 #endif
 }
 
@@ -60,7 +60,6 @@ void addNote(std::vector<Note> &notes) {
 }
 
 void NoteList(std::vector<Note> &notes){
-    
     std::cout << "[Notes List]:" << std::endl;
     for(int i = 0; i < notes.size(); ++i){
         std::cout << '[' << i + 1 << "] " << notes[i].Title  << std::endl;
@@ -70,11 +69,15 @@ void NoteList(std::vector<Note> &notes){
 
 void openNote(std::vector<Note> &notes) {
     int index;
-
+    std::string act;
     if (notes.empty()) {
-        std::cout << "[Open Note]:" << std::endl;
-        std::cout << "No notes Available!" << std::endl;
-        return;
+        std::cout << "[Notes List]:" << std::endl;
+        std::cout << " No notes Available!\n\n";
+        std::cout << "[Command]";
+        std::getline(std::cin >> std::ws, act);
+        if (act == ":q") {
+            return;
+        }
     }
 
     NoteList(notes);
@@ -85,7 +88,13 @@ void openNote(std::vector<Note> &notes) {
 
     ClearScreen();
     if (index >= 0 && index <= notes.size()) {
-            std::cout << "Date: " << notes[index].Date << '\n' << "Title: " << notes[index].Title << "\n\n" << notes[index].Content << '\n';
+        std::cout << "[(:q)- Quit]\n";
+        std::cout << "Date: " << notes[index].Date << '\n' << "Title: " << notes[index].Title << "\n" << notes[index].Content << '\n';
+        std::cout << "[Command]";
+        std::getline(std::cin >> std::ws, act);
+        if (act == ":q") {
+            return;
+        }
     } else if (index <= 0 && index >= notes.size()) {
         return;
     } else {
@@ -94,10 +103,15 @@ void openNote(std::vector<Note> &notes) {
 }
 
 void editNote(std::vector<Note> &notes) {
+    std::string act;
     if (notes.empty()) {
-        std::cout << "[Edit Note]:" << std::endl;
-        std::cout << "No notes Available!" << std::endl;
-        return;
+        std::cout << "[Notes List]:" << std::endl;
+        std::cout << " No notes Available!\n\n";
+        std::cout << "[Command]";
+        std::getline(std::cin >> std::ws, act);
+        if (act == ":q") {
+            return;
+        }
     }
 
     std::time_t now = std::time(nullptr);
@@ -144,10 +158,15 @@ void editNote(std::vector<Note> &notes) {
 }
 
 void deleteNote(std::vector<Note> &notes){
+    std::string act;
     if (notes.empty()) {
-        std::cout << "[Delete Note]:" << std::endl;
-        std::cout << "No available Notes" << std::endl;
-        return;
+        std::cout << "[Notes List]:" << std::endl;
+        std::cout << " No notes Available!\n\n";
+        std::cout << "[Command]";
+        std::getline(std::cin >> std::ws, act);
+        if (act == ":q") {
+            return;
+        }
     }
 
     NoteList(notes);
@@ -236,11 +255,11 @@ int main() {
     loadNotes(notes);
     ClearScreen();
     
-    std::cout << "\t=====================\n";
-    std::cout << "\t==      NOTES      ==\n";
-    std::cout << "\t=====================\n";
-    
     while (true) {
+        ClearScreen();
+        std::cout << "============================\n";
+        std::cout << "=====  :Kenjie Notes  ======\n";
+        std::cout << "============================\n";
         std::cout << "[add]-[open]-[edit]-[delete]\n";
         std::cout << "Save 'n Quit(:wq) Quit(:q)\n";
         std::cout << "[Command]";
